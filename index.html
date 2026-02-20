@@ -1,206 +1,368 @@
 <!DOCTYPE html>
+
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>בוט IT צבאי</title>
-
 <style>
-/* ===========================
-   FIXED CSS VARIABLES
-   =========================== */
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap');
+
 :root {
-  --green: #00ff88;
-  --bg: #080b0d;
-  --card: #0f1419;
-  --border: #1a2820;
-  --text: #c8d8c8;
-  --muted: #4a6050;
-  --user-bubble: #0d2818;
-  --bot-bubble: #111a14;
+–green: #00ff88;
+–bg: #080b0d;
+–card: #0f1419;
+–border: #1a2820;
+–text: #c8d8c8;
+–muted: #4a6050;
+–user-bubble: #0d2818;
+–bot-bubble: #111a14;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+- { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: sans-serif;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+background: var(–bg);
+color: var(–text);
+font-family: ‘Heebo’, sans-serif;
+height: 100dvh;
+display: flex;
+flex-direction: column;
+overflow: hidden;
 }
 
-/* Header */
+/* ── Header ── */
 header {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+padding: 0.85rem 1.25rem;
+border-bottom: 1px solid var(–border);
+display: flex;
+align-items: center;
+gap: 0.75rem;
+background: rgba(8,11,13,0.97);
+flex-shrink: 0;
 }
+.logo {
+width: 34px; height: 34px;
+background: #071208;
+border: 1px solid var(–green);
+border-radius: 6px;
+display: flex; align-items: center; justify-content: center;
+font-size: 1rem;
+}
+.header-title { font-weight: 900; color: #fff; font-size: 0.95rem; }
+.header-sub { font-size: 0.68rem; color: var(–muted); }
+.dot {
+width: 7px; height: 7px;
+background: var(–green);
+border-radius: 50%;
+margin-right: auto;
+box-shadow: 0 0 6px var(–green);
+animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-/* Messages */
+/* ── Messages ── */
 .messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+flex: 1;
+overflow-y: auto;
+padding: 1rem 1.25rem;
+display: flex;
+flex-direction: column;
+gap: 0.85rem;
+scroll-behavior: smooth;
 }
+.messages::-webkit-scrollbar { width: 3px; }
+.messages::-webkit-scrollbar-thumb { background: var(–border); border-radius: 2px; }
 
-.msg {
-  display: flex;
-  gap: 10px;
-}
-
+.msg { display: flex; gap: 0.6rem; align-items: flex-start; animation: fadeUp 0.2s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 .msg.user { flex-direction: row-reverse; }
 
+.avatar {
+width: 28px; height: 28px; min-width: 28px;
+border-radius: 5px; font-size: 0.8rem;
+display: flex; align-items: center; justify-content: center;
+border: 1px solid var(–border);
+}
+.msg.bot .avatar { background: #071208; border-color: var(–green); }
+.msg.user .avatar { background: #0d1a10; }
+
 .bubble {
-  padding: 10px 14px;
-  border-radius: 8px;
-  max-width: 75%;
-  border: 1px solid var(--border);
+max-width: 78%;
+padding: 0.7rem 1rem;
+border-radius: 8px;
+font-size: 0.88rem;
+line-height: 1.7;
+border: 1px solid var(–border);
+white-space: pre-wrap;
+word-break: break-word;
 }
+.msg.bot .bubble { background: var(–bot-bubble); border-radius: 3px 8px 8px 8px; }
+.msg.user .bubble { background: var(–user-bubble); border-radius: 8px 3px 8px 8px; }
 
-.msg.user .bubble {
-  background: var(--user-bubble);
+/* Staff cards inside bubble */
+.staff-card {
+display: flex;
+align-items: center;
+gap: 10px;
+background: #071208;
+border: 1px solid #1a3020;
+border-radius: 6px;
+padding: 10px 14px;
+text-decoration: none;
+color: var(–text);
+margin-top: 8px;
+transition: border-color 0.2s;
 }
+.staff-card:hover { border-color: var(–green); }
+.staff-name { font-weight: 700; color: #fff; font-size: 0.85rem; }
+.staff-phone { font-size: 0.75rem; color: var(–green); }
 
-.msg.bot .bubble {
-  background: var(--bot-bubble);
+/* Typing dots */
+.typing-bubble { display: flex; gap: 4px; align-items: center; padding: 0.75rem 1rem; }
+.dot-t { width: 6px; height: 6px; background: var(–green); border-radius: 50%; animation: bounce 1.2s infinite; }
+.dot-t:nth-child(2) { animation-delay: 0.2s; }
+.dot-t:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-5px);opacity:1} }
+
+/* Welcome */
+.welcome {
+text-align: center;
+padding: 2rem 1rem;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+gap: 1rem;
 }
+.welcome-icon {
+width: 60px; height: 60px;
+background: #071208; border: 1px solid var(–green);
+border-radius: 12px; font-size: 1.7rem;
+display: flex; align-items: center; justify-content: center;
+box-shadow: 0 0 25px #00ff8818;
+}
+.welcome h2 { color: #fff; font-size: 1.2rem; font-weight: 900; }
+.welcome p { color: var(–muted); font-size: 0.82rem; max-width: 300px; line-height: 1.6; }
+.quick-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-top: 0.25rem; }
+.quick-btn {
+background: var(–card); border: 1px solid var(–border);
+border-radius: 20px; padding: 0.35rem 0.8rem;
+font-size: 0.78rem; cursor: pointer; color: var(–text);
+font-family: ‘Heebo’, sans-serif; transition: all 0.2s;
+}
+.quick-btn:hover { border-color: var(–green); color: var(–green); }
 
-/* Input */
+/* ── Input ── */
 .input-area {
-  padding: 1rem;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 10px;
+padding: 0.85rem 1.25rem;
+border-top: 1px solid var(–border);
+background: rgba(8,11,13,0.97);
+flex-shrink: 0;
+display: flex;
+gap: 0.6rem;
+align-items: flex-end;
 }
-
-textarea {
-  flex: 1;
-  padding: 10px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text);
-  border-radius: 6px;
-  resize: none;
+textarea#userInput {
+flex: 1;
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 6px;
+padding: 0.65rem 0.9rem;
+color: var(–text);
+font-family: ‘Heebo’, sans-serif;
+font-size: 0.9rem;
+direction: rtl;
+resize: none;
+min-height: 44px; max-height: 120px;
+line-height: 1.5;
+transition: border-color 0.2s;
 }
-
-button {
-  background: var(--green);
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-  border-radius: 6px;
+textarea#userInput:focus { outline: none; border-color: var(–green); }
+textarea#userInput::placeholder { color: var(–muted); }
+#sendBtn {
+width: 44px; height: 44px;
+background: var(–green); border: none;
+border-radius: 6px; cursor: pointer;
+font-size: 1rem; transition: opacity 0.2s;
 }
+#sendBtn:hover { opacity: 0.85; }
+#sendBtn:disabled { opacity: 0.3; cursor: not-allowed; }
 </style>
-</head>
 
+</head>
 <body>
 
 <header>
-  <h3>🖥️ בוט IT צבאי</h3>
+  <div class="logo">🖥️</div>
+  <div>
+    <div class="header-title">בוט IT צבאי</div>
+    <div class="header-sub">תמיכה טכנית · מחלקת התקשוב</div>
+  </div>
+  <div class="dot"></div>
 </header>
 
-<div class="messages" id="messages"></div>
+<div class="messages" id="messages">
+  <div class="welcome" id="welcome">
+    <div class="welcome-icon">🖥️</div>
+    <h2>בוט IT צבאי</h2>
+    <p>שאל אותי כל שאלה בתחום המחשוב. אעזור לך לפתור תקלות צעד צעד.</p>
+    <div class="quick-btns">
+      <button class="quick-btn" onclick="quickAsk('מדפסת לא מדפיסה')">🖨️ מדפסת</button>
+      <button class="quick-btn" onclick="quickAsk('מסך לא מזוהה')">🖥️ מסך</button>
+      <button class="quick-btn" onclick="quickAsk('דרייבר חסר')">⬇️ דרייבר</button>
+      <button class="quick-btn" onclick="quickAsk('אין רשת במחשב')">🌐 רשת</button>
+      <button class="quick-btn" onclick="quickAsk('מקרן לא מתחבר')">📽️ מקרן</button>
+    </div>
+  </div>
+</div>
 
 <div class="input-area">
-  <textarea id="userInput" rows="1" placeholder="שאל שאלה..."></textarea>
-  <button onclick="sendMessage()">שלח</button>
+  <textarea id="userInput" placeholder="שאל שאלה טכנית..." rows="1"
+    onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+  <button id="sendBtn" onclick="sendMessage()">➤</button>
 </div>
 
 <script>
-/* ===========================
-   STATE
-   =========================== */
+// ── State ──────────────────────────────────────────────
 let apiKey = localStorage.getItem("gemini_api_key") || "";
 let history = [];
 let isLoading = false;
 
-/* ===========================
-   SYSTEM PROMPT
-   =========================== */
-const SYSTEM_PROMPT = `
-אתה בוט תמיכה טכנית IT צבאי.
+// ── Staff contacts ──────────────────────────────────────
+const STAFF = [
+  { name: "ליאב טוזלי",   phone: "0523800049", wa: "972523800049" },
+  { name: "טליה יאדגר",   phone: "0556636013", wa: "972556636013" },
+  { name: "טליה גורן",    phone: "0556654153", wa: "972556654153" },
+  { name: "גיורא מגור",   phone: "0542104737", wa: "972542104737" },
+];
+
+// ── System Prompt ───────────────────────────────────────
+const SYSTEM_PROMPT = `אתה בוט תמיכה טכנית IT צבאי מקצועי.
 ענה בעברית בלבד.
-תן שלבים ממוספרים.
-אם לא עוזר – הפנה לכונן מחשוב.
-`;
+תן הסברים ברורים עם שלבים ממוספרים.
+השתמש באימוג'י כדי להבהיר שלבים.
+אתה מומחה ב: מדפסות, דרייברים, מסכים, פלזמות, מקרנים, רשתות, Windows.
 
-/* ===========================
-   SAFE MESSAGE RENDER
-   (מונע XSS)
-   =========================== */
-function addMessage(role, text) {
-  const container = document.getElementById("messages");
+מאגר תקלות נפוצות:
 
-  const msgDiv = document.createElement("div");
-  msgDiv.className = "msg " + role;
+[מדפסת לא מדפיסה]
+1. בדוק שהמדפסת דלוקה (אור ירוק/כחול)
+2. בדוק כבל USB/רשת מחובר משני הצדדים
+3. לוח בקרה -> מכשירים ומדפסות -> בדוק סימן אזהרה
+4. לחץ ימני על מדפסת -> ראה מה מודפס -> מחק הכל
+5. Win+R -> services.msc -> Print Spooler -> הפעל מחדש
+6. לחץ ימני על מדפסת -> מאפיינים -> הדפס דף בדיקה
 
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
+[מסך/פלזמה לא מזוהה]
+1. בדוק שהמסך דלוק וכבל חשמל מחובר
+2. הוצא/הכנס כבל HDMI/VGA משני הצדדים
+3. בשלט: Source/Input -> בחר HDMI1/HDMI2/PC
+4. Win+P -> שכפל
+5. לחץ ימני שולחן עבודה -> הגדרות תצוגה -> זהה
 
-  // ❗ במקום innerHTML — משתמשים ב-textContent להגנה
-  bubble.textContent = text;
+[דרייבר חסר]
+1. לחץ ימני המחשב שלי -> נהל -> מנהל ההתקנים
+2. חפש התקן עם סימן אזהרה צהוב
+3. לחץ ימני -> עדכן מנהל התקן -> חפש אוטומטית
+4. HP: support.hp.com | Canon: canon.com/support | Dell: dell.com/support
+5. הפעל כמנהל מערכת -> הפעל מחדש
 
-  msgDiv.appendChild(bubble);
-  container.appendChild(msgDiv);
+[מקרן לא מתחבר]
+1. המתן 60 שניות לחימום
+2. בדוק כבל HDMI/VGA
+3. Source במקרן -> בחר כניסה נכונה
+4. Win+P -> שכפל
 
-  container.scrollTop = container.scrollHeight;
+[אין רשת]
+1. בדוק כבל רשת מחובר
+2. בדוק אם שאר המחשבים בחדר מחוברים
+3. לחץ ימני סמל רשת -> פתרון בעיות
+4. cmd כמנהל: ipconfig /release, ipconfig /renew, ipconfig /flushdns
+5. כבה/הדלק מחשב
+
+חשוב: אם המשתמש אומר שהפתרון לא עזר אחרי מספר ניסיונות — 
+ענה: "ESCALATE" בלבד (מילה אחת, ללא שום טקסט אחר).
+בכל שאר המקרים — ענה בעברית כרגיל.`;
+
+// ── Init ────────────────────────────────────────────────
+window.onload = () => {
+  if (!apiKey) promptApiKey();
+};
+
+function promptApiKey() {
+  const key = prompt("🔑 הכנס את מפתח ה-Gemini API שלך (חינמי מ-aistudio.google.com):");
+  if (key && key.trim()) {
+    apiKey = key.trim();
+    localStorage.setItem("gemini_api_key", apiKey);
+  }
 }
 
-/* ===========================
-   SEND MESSAGE
-   =========================== */
+// ── Input helpers ───────────────────────────────────────
+function handleKey(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 120) + "px";
+}
+
+function quickAsk(q) {
+  document.getElementById("userInput").value = q;
+  sendMessage();
+}
+
+// ── Send ────────────────────────────────────────────────
 async function sendMessage() {
   const input = document.getElementById("userInput");
   const text = input.value.trim();
-
   if (!text || isLoading) return;
 
-  if (!apiKey) {
-    apiKey = prompt("הכנס Gemini API Key:");
-    if (!apiKey) return;
-    localStorage.setItem("gemini_api_key", apiKey);
-  }
+  if (!apiKey) { promptApiKey(); return; }
+
+  // Remove welcome screen
+  const welcome = document.getElementById("welcome");
+  if (welcome) welcome.remove();
 
   addMessage("user", text);
   input.value = "";
+  input.style.height = "auto";
   history.push({ role: "user", parts: [{ text }] });
 
   isLoading = true;
+  document.getElementById("sendBtn").disabled = true;
+  const typingId = showTyping();
 
   try {
     const reply = await callGemini(text);
-    addMessage("bot", reply);
-    history.push({ role: "model", parts: [{ text: reply }] });
+
+    removeTyping(typingId);
+
+    if (reply.trim() === "ESCALATE") {
+      showEscalation();
+    } else {
+      addMessage("bot", reply);
+      history.push({ role: "model", parts: [{ text: reply }] });
+    }
 
   } catch (err) {
-    addMessage("bot", "⚠️ שגיאה: " + err.message);
+    removeTyping(typingId);
+    addMessage("bot", "⚠️ שגיאה: " + err.message + "\n\nנסה שוב או בדוק את מפתח ה-API.");
   }
 
   isLoading = false;
+  document.getElementById("sendBtn").disabled = false;
 }
 
-/* ===========================
-   GEMINI CALL
-   =========================== */
+// ── Gemini API ──────────────────────────────────────────
 async function callGemini(userMessage) {
-
   const contents = [
-    {
-      role: "user",
-      parts: [{ text: SYSTEM_PROMPT }]
-    },
+    { role: "user",  parts: [{ text: SYSTEM_PROMPT }] },
+    { role: "model", parts: [{ text: "מוכן לעזור!" }] },
     ...history.slice(-6),
-    {
-      role: "user",
-      parts: [{ text: userMessage }]
-    }
+    { role: "user",  parts: [{ text: userMessage }] }
   ];
 
   const response = await fetch(
@@ -210,24 +372,127 @@ async function callGemini(userMessage) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents,
-        generationConfig: {
-          temperature: 0.6,
-          maxOutputTokens: 800
-        }
+        generationConfig: { temperature: 0.6, maxOutputTokens: 800 }
       })
     }
   );
 
   if (!response.ok) {
-    throw new Error("API Error " + response.status);
+    const err = await response.json().catch(() => ({}));
+    throw new Error("API Error " + response.status + (err.error?.message ? ": " + err.error.message : ""));
   }
 
   const data = await response.json();
-  const text =
-    data.candidates?.[0]?.content?.parts?.map(p => p.text).join("") ||
-    "לא התקבלה תשובה.";
+  return data.candidates?.[0]?.content?.parts?.map(p => p.text).join("") || "לא התקבלה תשובה.";
+}
 
-  return text;
+// ── DOM helpers ─────────────────────────────────────────
+function addMessage(role, text) {
+  const container = document.getElementById("messages");
+  const msgDiv = document.createElement("div");
+  msgDiv.className = "msg " + role;
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = role === "bot" ? "🖥️" : "👤";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text; // ✅ מאובטח מפני XSS
+
+  msgDiv.appendChild(avatar);
+  msgDiv.appendChild(bubble);
+  container.appendChild(msgDiv);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showEscalation() {
+  const container = document.getElementById("messages");
+  const msgDiv = document.createElement("div");
+  msgDiv.className = "msg bot";
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = "🖥️";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+
+  // Header text — safe
+  const header = document.createElement("p");
+  header.textContent = "😔 מצטער שעדיין לא נפתר! הבעיה מורכבת מדי לפתרון מרחוק.";
+  header.style.marginBottom = "6px";
+
+  const subheader = document.createElement("p");
+  subheader.textContent = "📞 פנה לאחד מכונני המחשוב:";
+  subheader.style.marginBottom = "8px";
+  subheader.style.fontWeight = "700";
+
+  bubble.appendChild(header);
+  bubble.appendChild(subheader);
+
+  // Staff cards — built safely with DOM
+  STAFF.forEach(person => {
+    const link = document.createElement("a");
+    link.href = "https://wa.me/" + person.wa;
+    link.target = "_blank";
+    link.className = "staff-card";
+
+    const icon = document.createElement("span");
+    icon.textContent = "💬";
+    icon.style.fontSize = "1.3rem";
+
+    const info = document.createElement("div");
+
+    const name = document.createElement("div");
+    name.className = "staff-name";
+    name.textContent = person.name;
+
+    const phone = document.createElement("div");
+    phone.className = "staff-phone";
+    phone.textContent = person.phone + " · לחץ לפתיחת WhatsApp";
+
+    info.appendChild(name);
+    info.appendChild(phone);
+    link.appendChild(icon);
+    link.appendChild(info);
+    bubble.appendChild(link);
+  });
+
+  msgDiv.appendChild(avatar);
+  msgDiv.appendChild(bubble);
+  container.appendChild(msgDiv);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const container = document.getElementById("messages");
+  const id = "typing-" + Date.now();
+  const msgDiv = document.createElement("div");
+  msgDiv.className = "msg bot";
+  msgDiv.id = id;
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = "🖥️";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble typing-bubble";
+  [1,2,3].forEach(i => {
+    const d = document.createElement("div");
+    d.className = "dot-t";
+    bubble.appendChild(d);
+  });
+
+  msgDiv.appendChild(avatar);
+  msgDiv.appendChild(bubble);
+  container.appendChild(msgDiv);
+  container.scrollTop = container.scrollHeight;
+  return id;
+}
+
+function removeTyping(id) {
+  document.getElementById(id)?.remove();
 }
 </script>
 
