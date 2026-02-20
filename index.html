@@ -563,7 +563,6 @@ async function callGemini(userMessage) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: finalMessages,
-        tools: [{ google_search: {} }],
         generationConfig: {
           temperature: 0.7,
           maxOutputTokens: 1024,
@@ -582,9 +581,7 @@ async function callGemini(userMessage) {
   if (!candidate) throw new Error('לא התקבלה תשובה מ-Gemini');
 
   const text = candidate.content?.parts?.map(p => p.text || '').join('') || '';
-  const hasWebSearch = candidate.groundingMetadata?.webSearchQueries?.length > 0;
-
-  return { text, hasWebSearch };
+  return text;
 }
 
 // ── DOM Helpers ─────────────────────────────────────────────────────────────
