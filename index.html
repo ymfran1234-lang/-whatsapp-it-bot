@@ -1,638 +1,233 @@
 <!DOCTYPE html>
-
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>בוט IT צבאי</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Heebo:wght@300;400;700;900&display=swap');
 
+<style>
+/* ===========================
+   FIXED CSS VARIABLES
+   =========================== */
 :root {
-–green: #00ff88;
-–green-dim: #00cc66;
-–bg: #080b0d;
-–card: #0f1419;
-–border: #1a2820;
-–text: #c8d8c8;
-–muted: #4a6050;
-–user-bubble: #0d2818;
-–bot-bubble: #111a14;
+  --green: #00ff88;
+  --bg: #080b0d;
+  --card: #0f1419;
+  --border: #1a2820;
+  --text: #c8d8c8;
+  --muted: #4a6050;
+  --user-bubble: #0d2818;
+  --bot-bubble: #111a14;
 }
 
-- { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-background: var(–bg);
-color: var(–text);
-font-family: ‘Heebo’, sans-serif;
-height: 100dvh;
-display: flex;
-flex-direction: column;
-overflow: hidden;
-background-image:
-radial-gradient(ellipse at 100% 0%, #071a0f 0%, transparent 50%),
-radial-gradient(ellipse at 0% 100%, #050d08 0%, transparent 50%);
+  background: var(--bg);
+  color: var(--text);
+  font-family: sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ── Header ── */
+/* Header */
 header {
-padding: 0.85rem 1.25rem;
-border-bottom: 1px solid var(–border);
-display: flex;
-align-items: center;
-gap: 1rem;
-background: rgba(8,11,13,0.95);
-backdrop-filter: blur(10px);
-flex-shrink: 0;
-}
-.logo {
-width: 36px; height: 36px;
-background: #071208;
-border: 1px solid var(–green);
-border-radius: 6px;
-display: flex; align-items: center; justify-content: center;
-font-size: 1.1rem;
-flex-shrink: 0;
-}
-.header-text h1 {
-font-size: 0.95rem;
-font-weight: 700;
-color: #fff;
-}
-.header-text p {
-font-size: 0.7rem;
-color: var(–muted);
-font-family: ‘IBM Plex Mono’, monospace;
-}
-.status-dot {
-width: 7px; height: 7px;
-background: var(–green);
-border-radius: 50%;
-margin-right: auto;
-box-shadow: 0 0 6px var(–green);
-animation: pulse 2s infinite;
-}
-@keyframes pulse {
-0%, 100% { opacity: 1; }
-50% { opacity: 0.4; }
-}
-.setup-btn {
-background: transparent;
-border: 1px solid var(–border);
-border-radius: 4px;
-padding: 0.35rem 0.75rem;
-color: var(–muted);
-font-family: ‘IBM Plex Mono’, monospace;
-font-size: 0.7rem;
-cursor: pointer;
-transition: all 0.2s;
-}
-.setup-btn:hover { border-color: var(–green); color: var(–green); }
-
-/* ── Setup Panel ── */
-.setup-panel {
-display: none;
-background: var(–card);
-border-bottom: 1px solid var(–border);
-padding: 1rem 1.25rem;
-flex-shrink: 0;
-}
-.setup-panel.open { display: block; }
-.setup-title {
-font-family: ‘IBM Plex Mono’, monospace;
-font-size: 0.7rem;
-color: var(–green);
-letter-spacing: 2px;
-margin-bottom: 0.75rem;
-}
-.setup-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 0.75rem;
-}
-@media (max-width: 600px) { .setup-grid { grid-template-columns: 1fr; } }
-.setup-field label {
-display: block;
-font-size: 0.72rem;
-color: var(–muted);
-margin-bottom: 0.3rem;
-font-family: ‘IBM Plex Mono’, monospace;
-}
-.setup-field input, .setup-field textarea {
-width: 100%;
-background: #080b0d;
-border: 1px solid var(–border);
-border-radius: 4px;
-padding: 0.5rem 0.75rem;
-color: var(–text);
-font-family: ‘Heebo’, sans-serif;
-font-size: 0.82rem;
-direction: rtl;
-transition: border-color 0.2s;
-resize: vertical;
-}
-.setup-field input:focus, .setup-field textarea:focus {
-outline: none;
-border-color: var(–green);
-}
-.setup-field textarea { min-height: 80px; }
-.setup-save {
-margin-top: 0.75rem;
-background: var(–green);
-border: none;
-border-radius: 4px;
-padding: 0.5rem 1.25rem;
-color: #000;
-font-family: ‘Heebo’, sans-serif;
-font-weight: 700;
-font-size: 0.85rem;
-cursor: pointer;
-transition: opacity 0.2s;
-}
-.setup-save:hover { opacity: 0.85; }
-.setup-hint {
-font-size: 0.72rem;
-color: var(–muted);
-margin-top: 0.5rem;
-font-family: ‘IBM Plex Mono’, monospace;
-}
-.setup-hint a {
-color: var(–green);
-text-decoration: none;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* ── Messages ── */
+/* Messages */
 .messages {
-flex: 1;
-overflow-y: auto;
-padding: 1.25rem;
-display: flex;
-flex-direction: column;
-gap: 0.85rem;
-scroll-behavior: smooth;
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.messages::-webkit-scrollbar { width: 4px; }
-.messages::-webkit-scrollbar-track { background: transparent; }
-.messages::-webkit-scrollbar-thumb { background: var(–border); border-radius: 2px; }
 
 .msg {
-display: flex;
-gap: 0.65rem;
-align-items: flex-start;
-animation: fadeUp 0.25s ease;
+  display: flex;
+  gap: 10px;
 }
-@keyframes fadeUp {
-from { opacity: 0; transform: translateY(8px); }
-to   { opacity: 1; transform: translateY(0); }
-}
+
 .msg.user { flex-direction: row-reverse; }
 
-.avatar {
-width: 30px; height: 30px; min-width: 30px;
-border-radius: 5px;
-display: flex; align-items: center; justify-content: center;
-font-size: 0.85rem;
-border: 1px solid var(–border);
-}
-.msg.bot .avatar { background: #071208; border-color: var(–green); }
-.msg.user .avatar { background: #0d1a10; }
-
 .bubble {
-max-width: 78%;
-padding: 0.7rem 1rem;
-border-radius: 8px;
-font-size: 0.88rem;
-line-height: 1.7;
-border: 1px solid var(–border);
+  padding: 10px 14px;
+  border-radius: 8px;
+  max-width: 75%;
+  border: 1px solid var(--border);
 }
-.msg.bot .bubble {
-background: var(–bot-bubble);
-border-color: #1a2e1e;
-border-radius: 3px 8px 8px 8px;
-}
+
 .msg.user .bubble {
-background: var(–user-bubble);
-border-color: #1a3a20;
-border-radius: 8px 3px 8px 8px;
-text-align: right;
+  background: var(--user-bubble);
 }
 
-.bubble code {
-background: #071208;
-border: 1px solid var(–border);
-border-radius: 3px;
-padding: 0.1rem 0.4rem;
-font-family: ‘IBM Plex Mono’, monospace;
-font-size: 0.78rem;
-color: #88ffcc;
-}
-.bubble strong { color: #fff; }
-
-.source-tag {
-display: inline-flex; align-items: center; gap: 0.3rem;
-background: #071208;
-border: 1px solid var(–border);
-border-radius: 3px;
-padding: 0.15rem 0.5rem;
-font-family: ‘IBM Plex Mono’, monospace;
-font-size: 0.65rem;
-color: var(–muted);
-margin-top: 0.5rem;
-}
-.source-tag.web { color: #66aaff; border-color: #1a2a40; }
-.source-tag.local { color: var(–green); border-color: #1a3020; }
-
-/* Typing indicator */
-.typing .bubble {
-display: flex; gap: 4px; align-items: center;
-padding: 0.75rem 1rem;
-}
-.dot {
-width: 6px; height: 6px;
-background: var(–green);
-border-radius: 50%;
-animation: bounce 1.2s infinite;
-}
-.dot:nth-child(2) { animation-delay: 0.2s; }
-.dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes bounce {
-0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-30% { transform: translateY(-5px); opacity: 1; }
+.msg.bot .bubble {
+  background: var(--bot-bubble);
 }
 
-/* ── Input ── */
+/* Input */
 .input-area {
-padding: 0.85rem 1.25rem;
-border-top: 1px solid var(–border);
-background: rgba(8,11,13,0.95);
-backdrop-filter: blur(10px);
-flex-shrink: 0;
-}
-.input-row {
-display: flex;
-gap: 0.6rem;
-align-items: flex-end;
-}
-textarea#userInput {
-flex: 1;
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 6px;
-padding: 0.65rem 0.9rem;
-color: var(–text);
-font-family: ‘Heebo’, sans-serif;
-font-size: 0.9rem;
-direction: rtl;
-resize: none;
-min-height: 44px;
-max-height: 120px;
-line-height: 1.5;
-transition: border-color 0.2s;
-}
-textarea#userInput:focus { outline: none; border-color: var(–green); }
-textarea#userInput::placeholder { color: var(–muted); }
-
-.send-btn {
-width: 44px; height: 44px;
-background: var(–green);
-border: none;
-border-radius: 6px;
-color: #000;
-font-size: 1.1rem;
-cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-transition: opacity 0.2s, transform 0.1s;
-flex-shrink: 0;
-}
-.send-btn:hover { opacity: 0.85; }
-.send-btn:active { transform: scale(0.95); }
-.send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-.input-hint {
-font-family: ‘IBM Plex Mono’, monospace;
-font-size: 0.65rem;
-color: var(–muted);
-margin-top: 0.4rem;
-text-align: center;
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
 }
 
-/* ── Welcome ── */
-.welcome {
-text-align: center;
-padding: 2rem 1rem;
-flex: 1;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 1rem;
+textarea {
+  flex: 1;
+  padding: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  resize: none;
 }
-.welcome-icon {
-width: 64px; height: 64px;
-background: #071208;
-border: 1px solid var(–green);
-border-radius: 12px;
-display: flex; align-items: center; justify-content: center;
-font-size: 1.8rem;
-box-shadow: 0 0 30px #00ff8820;
-}
-.welcome h2 { font-size: 1.3rem; font-weight: 900; color: #fff; }
-.welcome p { font-size: 0.85rem; color: var(–muted); max-width: 320px; line-height: 1.6; }
-.quick-btns {
-display: flex; flex-wrap: wrap; gap: 0.5rem;
-justify-content: center; margin-top: 0.5rem;
-}
-.quick-btn {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 20px;
-padding: 0.4rem 0.9rem;
-font-size: 0.8rem;
-cursor: pointer;
-color: var(–text);
-transition: all 0.2s;
-font-family: ‘Heebo’, sans-serif;
-}
-.quick-btn:hover { border-color: var(–green); color: var(–green); }
 
-/* No API key warning */
-.no-key-warning {
-background: #1a0800;
-border: 1px solid #ff6b35;
-border-radius: 6px;
-padding: 0.75rem 1rem;
-font-size: 0.82rem;
-color: #ff9966;
-margin-bottom: 0.75rem;
-line-height: 1.5;
+button {
+  background: var(--green);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 6px;
 }
 </style>
-
 </head>
+
 <body>
 
 <header>
-  <div class="logo">🖥️</div>
-  <div class="header-text">
-    <h1>בוט IT צבאי</h1>
-    <p>// gemini · web_search · military_kb</p>
-  </div>
-  <div class="status-dot"></div>
-  <button class="setup-btn" onclick="toggleSetup()">⚙️ הגדרות</button>
+  <h3>🖥️ בוט IT צבאי</h3>
 </header>
 
-<div class="setup-panel" id="setupPanel">
-  <div class="setup-title">// CONFIGURATION</div>
-  <div class="setup-grid">
-    <div class="setup-field">
-      <label>🔑 Gemini API Key</label>
-      <input type="password" id="apiKey" placeholder="AIza..." />
-      <div class="setup-hint">
-        קבל מפתח חינמי: <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>
-      </div>
-    </div>
-    <div class="setup-field">
-      <label>🪖 מידע צבאי מיוחד</label>
-      <textarea id="militaryKb" placeholder="הכנס כאן מידע ספציפי שהבוט צריך לדעת:&#10;- שמות תוכנות פנימיות&#10;- נהלים מיוחדים&#10;- קישורים לדרייברים צבאיים&#10;- הוראות מיוחדות..."></textarea>
-    </div>
-  </div>
-  <button class="setup-save" onclick="saveSettings()">שמור הגדרות ✓</button>
-</div>
-
-<div id="chatArea" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
-
-  <div class="messages" id="messages">
-    <div class="welcome" id="welcome">
-      <div class="welcome-icon">🖥️</div>
-      <h2>בוט IT צבאי</h2>
-      <p>שאל אותי כל שאלה בתחום המחשוב. אחפש ברשת ואשתמש במידע הצבאי שהזנת.</p>
-      <div class="quick-btns">
-        <button class="quick-btn" onclick="askQuick('מדפסת לא מדפיסה, מה עושים?')">🖨️ מדפסת לא מדפיסה</button>
-        <button class="quick-btn" onclick="askQuick('מסך לא מזוהה למחשב')">🖥️ מסך לא מזוהה</button>
-        <button class="quick-btn" onclick="askQuick('איך מוריד דרייבר חסר?')">⬇️ דרייבר חסר</button>
-        <button class="quick-btn" onclick="askQuick('אין רשת במחשב')">🌐 אין רשת</button>
-        <button class="quick-btn" onclick="askQuick('מקרן לא מתחבר למחשב')">📽️ מקרן לא מתחבר</button>
-      </div>
-    </div>
-  </div>
-
-</div>
+<div class="messages" id="messages"></div>
 
 <div class="input-area">
-  <div id="noKeyWarning" class="no-key-warning" style="display:none;">
-    ⚠️ כדי להשתמש בבוט — לחץ על <strong>⚙️ הגדרות</strong> למעלה והכנס את מפתח ה-Gemini החינמי שלך.
-  </div>
-  <div class="input-row">
-    <textarea id="userInput" placeholder="שאל שאלה טכנית..." rows="1"
-      onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-    <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
-  </div>
-  <div class="input-hint">Enter לשליחה · Shift+Enter לשורה חדשה · מחפש ברשת בזמן אמת 🌐</div>
+  <textarea id="userInput" rows="1" placeholder="שאל שאלה..."></textarea>
+  <button onclick="sendMessage()">שלח</button>
 </div>
 
 <script>
-// ── State ──────────────────────────────────────────────────────────────────
-let apiKey = localStorage.getItem('gemini_api_key') || '';
-let militaryKb = localStorage.getItem('military_kb') || '';
+/* ===========================
+   STATE
+   =========================== */
+let apiKey = localStorage.getItem("gemini_api_key") || "";
 let history = [];
 let isLoading = false;
 
-const MILITARY_SYSTEM = `אתה בוט תמיכה טכנית IT צבאי מקצועי. 
-אתה עונה בעברית בלבד.
-אתה מומחה ב: מדפסות, דרייברים, מסכים, פלזמות, מקרנים, רשתות, Windows troubleshooting.
-תן הסברים ברורים עם שלבים ממוספרים.
-השתמש באימוג׳י כדי להבהיר שלבים.
-אם המידע הצבאי הפנימי רלוונטי — השתמש בו קודם.
-אם צריך — ציין שכדאי לפנות לטכנאי.`;
+/* ===========================
+   SYSTEM PROMPT
+   =========================== */
+const SYSTEM_PROMPT = `
+אתה בוט תמיכה טכנית IT צבאי.
+ענה בעברית בלבד.
+תן שלבים ממוספרים.
+אם לא עוזר – הפנה לכונן מחשוב.
+`;
 
-// ── Init ───────────────────────────────────────────────────────────────────
-window.onload = () => {
-  document.getElementById('apiKey').value = apiKey;
-  document.getElementById('militaryKb').value = militaryKb;
-  if (!apiKey) {
-    document.getElementById('noKeyWarning').style.display = 'block';
-    document.getElementById('setupPanel').classList.add('open');
-  }
-};
+/* ===========================
+   SAFE MESSAGE RENDER
+   (מונע XSS)
+   =========================== */
+function addMessage(role, text) {
+  const container = document.getElementById("messages");
 
-// ── Settings ───────────────────────────────────────────────────────────────
-function toggleSetup() {
-  document.getElementById('setupPanel').classList.toggle('open');
+  const msgDiv = document.createElement("div");
+  msgDiv.className = "msg " + role;
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+
+  // ❗ במקום innerHTML — משתמשים ב-textContent להגנה
+  bubble.textContent = text;
+
+  msgDiv.appendChild(bubble);
+  container.appendChild(msgDiv);
+
+  container.scrollTop = container.scrollHeight;
 }
 
-function saveSettings() {
-  apiKey = document.getElementById('apiKey').value.trim();
-  militaryKb = document.getElementById('militaryKb').value.trim();
-  localStorage.setItem('gemini_api_key', apiKey);
-  localStorage.setItem('military_kb', militaryKb);
-  document.getElementById('setupPanel').classList.remove('open');
-  document.getElementById('noKeyWarning').style.display = apiKey ? 'none' : 'block';
-
-  const btn = document.querySelector('.setup-save');
-  btn.textContent = '✅ נשמר!';
-  setTimeout(() => btn.textContent = 'שמור הגדרות ✓', 1500);
-}
-
-// ── Chat Logic ─────────────────────────────────────────────────────────────
-function askQuick(q) {
-  document.getElementById('userInput').value = q;
-  sendMessage();
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-}
-
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
-
+/* ===========================
+   SEND MESSAGE
+   =========================== */
 async function sendMessage() {
-  const input = document.getElementById('userInput');
+  const input = document.getElementById("userInput");
   const text = input.value.trim();
+
   if (!text || isLoading) return;
 
   if (!apiKey) {
-    document.getElementById('setupPanel').classList.add('open');
-    document.getElementById('noKeyWarning').style.display = 'block';
-    return;
+    apiKey = prompt("הכנס Gemini API Key:");
+    if (!apiKey) return;
+    localStorage.setItem("gemini_api_key", apiKey);
   }
 
-  // Hide welcome
-  const welcome = document.getElementById('welcome');
-  if (welcome) welcome.remove();
+  addMessage("user", text);
+  input.value = "";
+  history.push({ role: "user", parts: [{ text }] });
 
-  // Add user message
-  addMessage('user', text);
-  input.value = '';
-  input.style.height = 'auto';
-  history.push({ role: 'user', parts: [{ text }] });
-
-  // Show typing
-  const typingId = showTyping();
   isLoading = true;
-  document.getElementById('sendBtn').disabled = true;
 
   try {
     const reply = await callGemini(text);
-    removeTyping(typingId);
-    addMessage('bot', reply, true);
-    history.push({ role: 'model', parts: [{ text: reply }] });
+    addMessage("bot", reply);
+    history.push({ role: "model", parts: [{ text: reply }] });
+
   } catch (err) {
-    removeTyping(typingId);
-    addMessage('bot', `⚠️ שגיאה: ${err.message}\n\nבדוק שמפתח ה-API נכון בהגדרות.`);
+    addMessage("bot", "⚠️ שגיאה: " + err.message);
   }
 
   isLoading = false;
-  document.getElementById('sendBtn').disabled = false;
 }
 
+/* ===========================
+   GEMINI CALL
+   =========================== */
 async function callGemini(userMessage) {
-  // Build system context with military KB
-  const systemContext = MILITARY_SYSTEM + (militaryKb
-    ? `\n\n=== מידע צבאי פנימי ===\n${militaryKb}`
-    : '');
 
-  // Build messages with history
-  const messages = [
-    { role: 'user', parts: [{ text: systemContext + '\n\nהמשתמש שואל: ' + userMessage }] },
-    { role: 'model', parts: [{ text: 'הבנתי. אני מוכן לענות על שאלות IT צבאיות.' }] },
-    ...history.slice(-8), // last 8 messages for context
-    { role: 'user', parts: [{ text: userMessage }] }
+  const contents = [
+    {
+      role: "user",
+      parts: [{ text: SYSTEM_PROMPT }]
+    },
+    ...history.slice(-6),
+    {
+      role: "user",
+      parts: [{ text: userMessage }]
+    }
   ];
-
-  // Remove last user message duplication
-  const finalMessages = history.length === 0
-    ? [{ role: 'user', parts: [{ text: systemContext + '\n\nשאלה: ' + userMessage }] }]
-    : [
-        { role: 'user', parts: [{ text: systemContext }] },
-        { role: 'model', parts: [{ text: 'מוכן לעזור!' }] },
-        ...history.slice(-6),
-        { role: 'user', parts: [{ text: userMessage }] }
-      ];
 
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
     {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: finalMessages,
+        contents,
         generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 1024,
+          temperature: 0.6,
+          maxOutputTokens: 800
         }
       })
     }
   );
 
   if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error?.message || `HTTP ${response.status}`);
+    throw new Error("API Error " + response.status);
   }
 
   const data = await response.json();
-  const candidate = data.candidates?.[0];
-  if (!candidate) throw new Error('לא התקבלה תשובה מ-Gemini');
+  const text =
+    data.candidates?.[0]?.content?.parts?.map(p => p.text).join("") ||
+    "לא התקבלה תשובה.";
 
-  const text = candidate.content?.parts?.map(p => p.text || '').join('') || '';
   return text;
-}
-
-// ── DOM Helpers ─────────────────────────────────────────────────────────────
-function addMessage(role, content, fromGemini = false) {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-
-  let text = typeof content === 'object' ? content.text : content;
-  const hasWebSearch = typeof content === 'object' ? content.hasWebSearch : false;
-
-  // Format text
-  text = text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\n/g, '<br>');
-
-  const sourceTag = hasWebSearch
-    ? '<br><span class="source-tag web">🌐 מחפש ברשת בזמן אמת</span>'
-    : (fromGemini && militaryKb ? '<br><span class="source-tag local">🪖 כולל מידע צבאי פנימי</span>' : '');
-
-  div.innerHTML = `
-    <div class="avatar">${role === 'bot' ? '🖥️' : '👤'}</div>
-    <div class="bubble">${text}${sourceTag}</div>
-  `;
-
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function showTyping() {
-  const msgs = document.getElementById('messages');
-  const id = 'typing-' + Date.now();
-  const div = document.createElement('div');
-  div.className = 'msg bot typing';
-  div.id = id;
-  div.innerHTML = `
-    <div class="avatar">🖥️</div>
-    <div class="bubble">
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-    </div>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  return id;
-}
-
-function removeTyping(id) {
-  document.getElementById(id)?.remove();
 }
 </script>
 
